@@ -10,7 +10,7 @@ export class ScrapingController {
 
   @Get('api/ejecutar-script')
   async runScrape() {
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox'] });
     try {
       await this.scrapingService.mainScrape();
     } catch (error) {
