@@ -5,14 +5,11 @@ import { Document } from "mongoose";
 @Schema({ collection: 'products' })
 export class Product extends Document {
 
-  @Prop()
-  _id: String;
+  @Prop({ required: true })
+  datetime: Date;
 
   @Prop({ required: true })
   date: String;
-
-  @Prop({ required: true })
-  hour: String;
 
   @Prop({ required: true })
   name: String;
