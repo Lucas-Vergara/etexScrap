@@ -5,6 +5,8 @@ import homecenterScrape from '../distributors/homecenterScrape';
 import { ProductService } from 'src/modules/product/services/product.service';
 import yolitoScrape from '../distributors/yolitoScrape';
 import ferrobalScrape from '../distributors/ferrobalScrape';
+import { Cron, CronExpression } from '@nestjs/schedule';
+
 
 @Injectable()
 export class ScrapingService {
@@ -12,6 +14,11 @@ export class ScrapingService {
     private readonly baseProductService: BaseProductService,
     private readonly productService: ProductService,
   ) {}
+
+  @Cron('0 2 * * *', { timeZone: 'America/Santiago' })
+  async handleScraping() {
+    await this.mainScrape();
+  }
 
   async mainScrape() {
     try {
