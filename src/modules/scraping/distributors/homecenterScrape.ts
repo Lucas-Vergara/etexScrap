@@ -5,7 +5,7 @@ export default async function homecenterScrape(input: {
   products: BaseProduct[],
   date: Date;
 }): Promise<any> {
-  const browser = await puppeteer.launch({ headless: false });
+  const browser = await puppeteer.launch({ headless: true });
   const results: any[] = [];
   const date = input.date
   const day: string = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`
