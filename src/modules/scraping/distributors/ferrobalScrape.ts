@@ -5,7 +5,7 @@ export default async function ferrobalScrape(input: {
   products: BaseProduct[],
   date: Date;
 }): Promise<any> {
-  const browser = await puppeteer.launch({ headless: true });
+  const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox'] });
   const results: any[] = [];
   const date = input.date
   const day: string = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`
