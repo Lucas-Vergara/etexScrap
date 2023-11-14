@@ -8,7 +8,7 @@ export class ScrapingController {
 
   constructor(private readonly scrapingService: ScrapingService) {}
 
-  @Get('/ejecutar-script')
+  @Get('api/ejecutar-script')
   async runScrape() {
     const browser = await puppeteer.launch();
     try {
