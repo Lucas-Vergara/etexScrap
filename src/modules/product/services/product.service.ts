@@ -16,7 +16,6 @@ export class ProductService {
       console.log('Accessing collection:', collectionName, 'in database:', dbName);
 
       const result = await this.productModel.find().exec();
-      console.log('Result from ProductService findAll:', result);
       return result
     } catch (error) {
       console.error('Error in ProductService findAll:', error);
