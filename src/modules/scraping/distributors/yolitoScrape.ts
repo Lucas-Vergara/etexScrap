@@ -10,15 +10,12 @@ export default async function yolitoScrape(input: {
   const date = input.date
   const day: string = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`
   const page = await browser.newPage();
-  const base_product_url = "https://www.yolito.cl/Producto/"
   const base_url = "https://www.yolito.cl/Home/SetDeliveryMethod?isDelivery=True&idComuna="
   await page.goto(base_url + "Las Condes")
   await page.goto("https://www.yolito.cl/")
 
   for (const product of input.products) {
-
-
-    await page.goto(`${base_product_url}${product.sku}`);
+    await page.goto(product.sku);
 
     try {
       // Espera a que aparezca el elemento de precio

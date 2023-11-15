@@ -1,7 +1,7 @@
 import * as puppeteer from 'puppeteer';
 import { BaseProduct } from '../../baseProduct/models/baseProduct.interface'
 
-export default async function homecenterScrape(input: {
+export default async function construplazaScrape(input: {
   products: BaseProduct[],
   date: Date;
 }): Promise<any> {
@@ -11,24 +11,18 @@ export default async function homecenterScrape(input: {
   const day: string = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`
   const page = await browser.newPage();
 
-
   for (const product of input.products) {
-    await page.goto(product.sku);
-    // old scrape, with searchbar clicking
-    // await page.goto('https://sodimac.falabella.com/sodimac-cl');
-    // await page.type('#testId-SearchBar-Input', product.sku);
-    // await page.click('.SearchBar-module_searchBtnIcon__2L2s0');
-
     try {
-      await page.waitForSelector('li[data-internet-price]');
+      await page.goto(product.sku);
 
-      const price = await page.$eval('li[data-internet-price]', (element) => {
-        return element.getAttribute('data-internet-price').replace('.', '');
+      const price = await page.$eval('span.price', (element) => {
+        return element.textContent;
       });
 
-      const webTitle = await page.$eval('h1[data-name]', (element) => {
-        return element.getAttribute('data-name');
+      const webTitle = await page.$eval('div.name', (element) => {
+        return element.textContent;
       });
+
 
       const result = {
         datetime: date,
@@ -36,10 +30,10 @@ export default async function homecenterScrape(input: {
         name: product.name,
         brand: product.brand,
         distributor: product.distributor,
-        web_title: webTitle,
+        web_title: webTitle.trim().replace(/\\n/g, ''),
         sku: product.sku,
         presence: true,
-        price: parseInt(price),
+        price: parseInt(price.replace(/[^\d]/g, '')),
       };
 
       results.push(result);
