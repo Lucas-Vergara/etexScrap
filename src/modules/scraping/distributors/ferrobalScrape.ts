@@ -10,6 +10,7 @@ export default async function ferrobalScrape(input: {
   const date = input.date
   const day: string = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`
   const page = await browser.newPage();
+  page.setDefaultNavigationTimeout(0);
 
   for (const product of input.products) {
     try {

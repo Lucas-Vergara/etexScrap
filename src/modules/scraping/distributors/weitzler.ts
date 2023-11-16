@@ -10,6 +10,7 @@ export default async function weitzlerScrape(input: {
   const date = input.date
   const day: string = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`
   const page = await browser.newPage();
+  page.setDefaultNavigationTimeout(0);
   const maxTries = 15;
   let currentTry = 0;
 
@@ -18,7 +19,7 @@ export default async function weitzlerScrape(input: {
     while (currentTry < maxTries) {
       try {
         await page.goto(product.sku);
-        await page.waitForSelector('h1.product-title.product_title.entry-title', { timeout: 5000 });
+        await page.waitForSelector('h1.product-title.product_title.entry-title', { timeout: 15000 });
 
         const price = await page.$eval('p.price.product-page-price', (element) => {
           return element.textContent;

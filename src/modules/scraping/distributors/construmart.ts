@@ -10,6 +10,7 @@ export default async function construmartScrape(input: {
   const date = input.date
   const day: string = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`
   const page = await browser.newPage();
+  page.setDefaultNavigationTimeout(0);
   // await page.goto('https://www.construmart.cl/');
   // await page.select('select#region', 'XIII REGIÓN METROPOLITANA DE SANTIAGO');
   // await page.click('button.storeSelectorButton');
@@ -21,7 +22,7 @@ export default async function construmartScrape(input: {
     while (currentTry < maxTries) {
       try {
         await page.goto(product.sku);
-        await page.waitForSelector('.vtex-product-price-1-x-sellingPriceValue', { timeout: 5000 });
+        await page.waitForSelector('.vtex-product-price-1-x-sellingPriceValue', { timeout: 15000 });
 
         const price = await page.$eval('.vtex-product-price-1-x-sellingPriceValue', (element) => {
           return element.textContent.trim();

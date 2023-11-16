@@ -10,6 +10,7 @@ export default async function prodalamScrape(input: {
   const date = input.date
   const day: string = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`
   const page = await browser.newPage();
+  page.setDefaultNavigationTimeout(0);
   const maxTries = 15;
   let currentTry = 0;
 
@@ -18,7 +19,7 @@ export default async function prodalamScrape(input: {
     while (currentTry < maxTries) {
       try {
         await page.goto(product.sku);
-        await page.waitForSelector('span#gtm_price', { timeout: 5000 });
+        await page.waitForSelector('span#gtm_price', { timeout: 15000 });
 
         const price = await page.$eval('span#gtm_price', (element) => {
           return element.textContent;

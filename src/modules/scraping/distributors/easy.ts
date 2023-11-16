@@ -10,6 +10,7 @@ export default async function easyScrape(input: {
   const date = input.date
   const day: string = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`
   const page = await browser.newPage();
+  page.setDefaultNavigationTimeout(0);
   const maxTries = 15;
   let currentTry = 0;
 
@@ -19,8 +20,8 @@ export default async function easyScrape(input: {
       try {
         await page.goto(product.sku);
 
-        await page.waitForSelector('span.vtex-store-components-3-x-productBrand', { timeout: 5000 });
-        await page.waitForSelector('div.easycl-precio-cencosud-0-x-lastPrice', { timeout: 5000 });
+        await page.waitForSelector('span.vtex-store-components-3-x-productBrand', { timeout: 15000 });
+        await page.waitForSelector('div.easycl-precio-cencosud-0-x-lastPrice', { timeout: 15000 });
 
         const price = await page.$eval('div.easycl-precio-cencosud-0-x-lastPrice', (element) => {
           return element.textContent;

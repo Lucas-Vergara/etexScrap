@@ -10,6 +10,7 @@ export default async function imperialScrape(input: {
   const date = input.date
   const day: string = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`
   const page = await browser.newPage();
+  page.setDefaultNavigationTimeout(0);
   const maxTries = 15;
   let currentTry = 0;
 
@@ -18,7 +19,7 @@ export default async function imperialScrape(input: {
     while (currentTry < maxTries) {
       try {
         await page.goto(product.sku);
-        await page.waitForSelector('h2[data-bind="text: $widgetViewModel.product().displayName"]', { timeout: 5000 });
+        await page.waitForSelector('h2[data-bind="text: $widgetViewModel.product().displayName"]', { timeout: 15000 });
 
         const webTitle = await page.$eval('h2[data-bind="text: $widgetViewModel.product().displayName"]', (element) => {
           return element.textContent;
