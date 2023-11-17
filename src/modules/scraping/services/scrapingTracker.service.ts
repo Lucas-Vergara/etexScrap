@@ -10,8 +10,9 @@ export class ScrapingTrackerService {
     private readonly scrapingTrackerModel: Model<ScrapingTracker>,
   ) {}
 
-  async create(): Promise<ScrapingTracker> {
-    const createdTracker = new this.scrapingTrackerModel({
+  async create(options?: Partial<ScrapingTracker>): Promise<ScrapingTracker> {
+
+    const defaultValues = new this.scrapingTrackerModel({
       status: ScrapingServiceStatus.RUNNING,
       started: new Date(),
       completed: null,
@@ -19,6 +20,9 @@ export class ScrapingTrackerService {
       initiator: null,
       errorMessage: null,
     });
+
+    const trackerData = { ...defaultValues, ...options };
+    const createdTracker = new this.scrapingTrackerModel(trackerData);
 
     return createdTracker.save();
   }
