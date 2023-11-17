@@ -1,4 +1,4 @@
-import { Controller, Get, Res } from '@nestjs/common';
+import { Controller, Get, Res, UseGuards } from '@nestjs/common';
 import { ScrapingService } from '../services/scraping.service';
 import * as puppeteer from 'puppeteer';
 import * as ExcelJS from 'exceljs';
@@ -7,6 +7,7 @@ import { ProductService } from 'src/modules/product/services/product.service';
 import { Response } from 'express';
 import { ScrapingTrackerService } from '../services/scrapingTracker.service';
 import { ScrapingTracker, ScrapingServiceStatus } from '../models/scrapingTracker.model';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
 
 @Controller()
@@ -29,12 +30,6 @@ export class ScrapingController {
     } catch (error) {
       console.error('Error en el scraping:', error);
     } finally {
-      const updates = {
-        status: ScrapingServiceStatus.COMPLETED,
-        completed: new Date,
-        progress: 'finished'
-      }
-      await this.scrapingTrackerService.update(tracker._id, updates);
     }
 
   }
@@ -85,6 +80,7 @@ export class ScrapingController {
     }
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get('api/last-tracker')
   async getLastTracker() {
     try {

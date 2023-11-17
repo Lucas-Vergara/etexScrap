@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { BaseProductService } from 'src/modules/baseProduct/services/baseProduct.service';
-import { BaseProduct } from 'src/modules/baseProduct/models/baseProduct.interface';
+import { BaseProductService } from 'src/modules/product/services/baseProduct.service';
+import { BaseProduct } from 'src/modules/product/models/baseProduct.interface';
 import homecenterScrape from '../distributors/homecenter';
 import { ProductService } from 'src/modules/product/services/product.service';
 import yolitoScrape from '../distributors/yolito';
@@ -13,7 +13,7 @@ import imperialScrape from '../distributors/imperial';
 import tosoScrape from '../distributors/toso';
 import weitzlerScrape from '../distributors/weitzler';
 import prodalamScrape from '../distributors/prodalam';
-import { ScrapingTracker } from '../models/scrapingTracker.model';
+import { ScrapingServiceStatus, ScrapingTracker } from '../models/scrapingTracker.model';
 import { ScrapingTrackerService } from './scrapingTracker.service';
 
 
@@ -45,10 +45,6 @@ export class ScrapingService {
       const tosoProducts = filterProductsByDistributor(products, 'Toso')
       const weitzlerProducts = filterProductsByDistributor(products, 'Weitzler')
       const prodalamProducts = filterProductsByDistributor(products, 'Prodalam')
-
-
-
-
 
       await this.scrapingTrackerService.update(tracker._id, { progress: 'Construmart' });
       let results = await construmartScrape({
@@ -140,6 +136,12 @@ export class ScrapingService {
         await this.productService.createOrUpdate(result);
       }
 
+      const updates = {
+        status: ScrapingServiceStatus.COMPLETED,
+        completed: new Date,
+        progress: 'finished'
+      }
+      await this.scrapingTrackerService.update(tracker._id, updates);
     } catch (error) {
       await this.scrapingTrackerService.update(tracker._id, { errorMessage: error });
       console.log(error);

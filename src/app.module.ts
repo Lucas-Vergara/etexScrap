@@ -6,6 +6,8 @@ import { ScrapDataModule } from './modules/scrapData/scrapData.module';
 import { ProductModule } from './modules/product/product.module';
 import { ConfigModule } from '@nestjs/config';
 import { ScrapingModule } from './modules/scraping/scraping.module';
+import { AuthModule } from './auth/auth.module';
+import { UsersModule } from './modules/users/users.module';
 
 @Module({
   imports: [
@@ -13,7 +15,9 @@ import { ScrapingModule } from './modules/scraping/scraping.module';
     MongooseModule.forRoot(process.env.MONGO_CONNECTION),
     ScrapDataModule,
     ProductModule,
-    ScrapingModule
+    ScrapingModule,
+    AuthModule,
+    UsersModule
   ],
   controllers: [AppController],
   providers: [AppService],

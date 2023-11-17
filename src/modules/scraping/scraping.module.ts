@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { ScrapingController } from './controllers/scraping.controller';
 import { ScrapingService } from './services/scraping.service';
-import { BaseProductService } from 'src/modules/baseProduct/services/baseProduct.service';
+import { BaseProductService } from 'src/modules/product/services/baseProduct.service';
 import { MongooseModule } from '@nestjs/mongoose';
-import { BaseProduct, BaseProductSchema } from '../baseProduct/models/baseProduct.model';
+import { BaseProduct, BaseProductSchema } from '../product/models/baseProduct.model';
 import { ProductService } from '../product/services/product.service';
 import { Product, ProductSchema } from '../product/models/product.model';
 import { ScheduleModule } from '@nestjs/schedule';

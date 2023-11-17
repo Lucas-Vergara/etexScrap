@@ -1,5 +1,5 @@
 import * as puppeteer from 'puppeteer';
-import { BaseProduct } from '../../baseProduct/models/baseProduct.interface'
+import { BaseProduct } from '../../product/models/baseProduct.interface'
 
 export default async function tosoScrape(input: {
   products: BaseProduct[],
