@@ -19,9 +19,9 @@ export default async function construmartScrape(input: {
 
   for (const product of input.products) {
     currentTry = 0
+    await page.goto(product.sku);
     while (currentTry < maxTries) {
       try {
-        await page.goto(product.sku);
         await page.waitForSelector('.vtex-product-price-1-x-sellingPriceValue', { timeout: 15000 });
 
         const price = await page.$eval('.vtex-product-price-1-x-sellingPriceValue', (element) => {

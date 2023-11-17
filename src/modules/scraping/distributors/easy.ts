@@ -16,9 +16,9 @@ export default async function easyScrape(input: {
 
   for (const product of input.products) {
     currentTry = 0
+    await page.goto(product.sku);
     while (currentTry < maxTries) {
       try {
-        await page.goto(product.sku);
 
         await page.waitForSelector('span.vtex-store-components-3-x-productBrand', { timeout: 15000 });
         await page.waitForSelector('div.easycl-precio-cencosud-0-x-lastPrice', { timeout: 15000 });

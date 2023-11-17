@@ -16,9 +16,9 @@ export default async function prodalamScrape(input: {
 
   for (const product of input.products) {
     currentTry = 0
+    await page.goto(product.sku);
     while (currentTry < maxTries) {
       try {
-        await page.goto(product.sku);
         await page.waitForSelector('span#gtm_price', { timeout: 15000 });
 
         const price = await page.$eval('span#gtm_price', (element) => {

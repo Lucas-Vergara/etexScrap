@@ -13,6 +13,8 @@ import imperialScrape from '../distributors/imperial';
 import tosoScrape from '../distributors/toso';
 import weitzlerScrape from '../distributors/weitzler';
 import prodalamScrape from '../distributors/prodalam';
+import { ScrapingTracker } from '../models/scrapingTracker.model';
+import { ScrapingTrackerService } from './scrapingTracker.service';
 
 
 @Injectable()
@@ -20,14 +22,16 @@ export class ScrapingService {
   constructor(
     private readonly baseProductService: BaseProductService,
     private readonly productService: ProductService,
+    private readonly scrapingTrackerService: ScrapingTrackerService,
   ) {}
 
   @Cron('0 2 * * *', { timeZone: 'America/Santiago' })
   async handleScraping() {
-    await this.mainScrape();
+    const tracker = await this.scrapingTrackerService.create();
+    await this.mainScrape(tracker);
   }
 
-  async mainScrape() {
+  async mainScrape(tracker: ScrapingTracker) {
     try {
       const products = await this.baseProductService.findAll();
       const date = new Date()
@@ -42,31 +46,12 @@ export class ScrapingService {
       const weitzlerProducts = filterProductsByDistributor(products, 'Weitzler')
       const prodalamProducts = filterProductsByDistributor(products, 'Prodalam')
 
-      let results = await homecenterScrape({
-        products: sodimanProducts,
-        date: date,
-      });
-      for (const result of results) {
-        await this.productService.createOrUpdate(result);
-      }
 
-      results = await yolitoScrape({
-        products: yolitoProducts,
-        date: date,
-      });
-      for (const result of results) {
-        await this.productService.createOrUpdate(result);
-      }
 
-      results = await ferrobalScrape({
-        products: ferrobalProducts,
-        date: date,
-      });
-      for (const result of results) {
-        await this.productService.createOrUpdate(result);
-      }
 
-      results = await construmartScrape({
+
+      await this.scrapingTrackerService.update(tracker._id, { progress: 'Construmart' });
+      let results = await construmartScrape({
         products: construmartProducts,
         date: date,
       });
@@ -74,6 +59,7 @@ export class ScrapingService {
         await this.productService.createOrUpdate(result);
       }
 
+      await this.scrapingTrackerService.update(tracker._id, { progress: 'Construplaza' });
       results = await construplazaScrape({
         products: construplazaProducts,
         date: date,
@@ -82,6 +68,7 @@ export class ScrapingService {
         await this.productService.createOrUpdate(result);
       }
 
+      await this.scrapingTrackerService.update(tracker._id, { progress: 'Easy' });
       results = await easyScrape({
         products: easyProducts,
         date: date,
@@ -90,6 +77,25 @@ export class ScrapingService {
         await this.productService.createOrUpdate(result);
       }
 
+      await this.scrapingTrackerService.update(tracker._id, { progress: 'Ferrobal' });
+      results = await ferrobalScrape({
+        products: ferrobalProducts,
+        date: date,
+      });
+      for (const result of results) {
+        await this.productService.createOrUpdate(result);
+      }
+
+      await this.scrapingTrackerService.update(tracker._id, { progress: 'Homecenter' });
+      results = await homecenterScrape({
+        products: sodimanProducts,
+        date: date,
+      });
+      for (const result of results) {
+        await this.productService.createOrUpdate(result);
+      }
+
+      await this.scrapingTrackerService.update(tracker._id, { progress: 'Imperial' });
       results = await imperialScrape({
         products: imperialProducts,
         date: date,
@@ -98,6 +104,7 @@ export class ScrapingService {
         await this.productService.createOrUpdate(result);
       }
 
+      await this.scrapingTrackerService.update(tracker._id, { progress: 'Prodalam' });
       results = await prodalamScrape({
         products: prodalamProducts,
         date: date,
@@ -106,6 +113,7 @@ export class ScrapingService {
         await this.productService.createOrUpdate(result);
       }
 
+      await this.scrapingTrackerService.update(tracker._id, { progress: 'Toso' });
       results = await tosoScrape({
         products: tosoProducts,
         date: date,
@@ -114,6 +122,7 @@ export class ScrapingService {
         await this.productService.createOrUpdate(result);
       }
 
+      await this.scrapingTrackerService.update(tracker._id, { progress: 'Weitzler' });
       results = await weitzlerScrape({
         products: weitzlerProducts,
         date: date,
@@ -122,7 +131,17 @@ export class ScrapingService {
         await this.productService.createOrUpdate(result);
       }
 
+      await this.scrapingTrackerService.update(tracker._id, { progress: 'Yolito' });
+      results = await yolitoScrape({
+        products: yolitoProducts,
+        date: date,
+      });
+      for (const result of results) {
+        await this.productService.createOrUpdate(result);
+      }
+
     } catch (error) {
+      await this.scrapingTrackerService.update(tracker._id, { errorMessage: error });
       console.log(error);
     }
   }

@@ -5,6 +5,8 @@ import * as ExcelJS from 'exceljs';
 import { Product } from 'src/modules/product/models/product.model';
 import { ProductService } from 'src/modules/product/services/product.service';
 import { Response } from 'express';
+import { ScrapingTrackerService } from '../services/scrapingTracker.service';
+import { ScrapingTracker, ScrapingServiceStatus } from '../models/scrapingTracker.model';
 
 
 @Controller()
@@ -12,19 +14,29 @@ export class ScrapingController {
 
   constructor(
     private readonly scrapingService: ScrapingService,
-    private readonly productService: ProductService
+    private readonly productService: ProductService,
+    private readonly scrapingTrackerService: ScrapingTrackerService,
   ) {}
 
   @Get('api/ejecutar-script')
   async runScrape() {
-    const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox'] });
+    // const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox'] });
+
+    const tracker = await this.scrapingTrackerService.create();
+
     try {
-      await this.scrapingService.mainScrape();
+      await this.scrapingService.mainScrape(tracker);
     } catch (error) {
       console.error('Error en el scraping:', error);
     } finally {
-      await browser.close();
+      const updates = {
+        status: ScrapingServiceStatus.COMPLETED,
+        completed: new Date,
+        progress: 'finished'
+      }
+      await this.scrapingTrackerService.update(tracker._id, updates);
     }
+
   }
 
   @Get('api/download-excel')
@@ -70,6 +82,17 @@ export class ScrapingController {
     } catch (error) {
       console.error('Error in downloadExcel:', error);
       res.status(500).send('Internal Server Error');
+    }
+  }
+
+  @Get('api/last-tracker')
+  async getLastTracker() {
+    try {
+      const lastTracker = await this.scrapingTrackerService.findLastTracker();
+      return lastTracker;
+    } catch (error) {
+      console.error('Error in getLastTracker:', error);
+      throw error;
     }
   }
 }

@@ -16,9 +16,9 @@ export default async function weitzlerScrape(input: {
 
   for (const product of input.products) {
     currentTry = 0
+    await page.goto(product.sku);
     while (currentTry < maxTries) {
       try {
-        await page.goto(product.sku);
         await page.waitForSelector('h1.product-title.product_title.entry-title', { timeout: 15000 });
 
         const price = await page.$eval('p.price.product-page-price', (element) => {

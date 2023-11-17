@@ -16,9 +16,9 @@ export default async function tosoScrape(input: {
 
   for (const product of input.products) {
     currentTry = 0
+    await page.goto(product.sku);
     while (currentTry < maxTries) {
       try {
-        await page.goto(product.sku);
         await page.waitForSelector('span.woocommerce-Price-amount bdi', { timeout: 15000 });
 
         let price;
