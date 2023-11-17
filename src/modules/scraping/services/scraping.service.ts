@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { BaseProductService } from 'src/modules/baseProduct/services/baseProduct.service';
 import { BaseProduct } from 'src/modules/baseProduct/models/baseProduct.interface';
-import homecenterScrape from '../distributors/homecenterScrape';
+import homecenterScrape from '../distributors/homecenter';
 import { ProductService } from 'src/modules/product/services/product.service';
-import yolitoScrape from '../distributors/yolitoScrape';
-import ferrobalScrape from '../distributors/ferrobalScrape';
+import yolitoScrape from '../distributors/yolito';
+import ferrobalScrape from '../distributors/ferrobal';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import construmartScrape from '../distributors/construmart';
 import construplazaScrape from '../distributors/construplaza';
