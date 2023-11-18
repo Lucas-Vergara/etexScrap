@@ -6,10 +6,16 @@ import { Document } from "mongoose";
 export class Product extends Document {
 
   @Prop({ required: true })
-  datetime: Date;
+  date: String;
 
   @Prop({ required: true })
-  date: String;
+  day: String
+
+  @Prop({ required: true })
+  month: String
+
+  @Prop({ required: true })
+  year: String
 
   @Prop({ required: true })
   name: String;

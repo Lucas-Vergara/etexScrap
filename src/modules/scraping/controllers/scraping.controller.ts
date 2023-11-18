@@ -23,7 +23,7 @@ export class ScrapingController {
   async runScrape() {
     // const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox'] });
 
-    const tracker = await this.scrapingTrackerService.create({ initiator: 'Servidor' });
+    const tracker = await this.scrapingTrackerService.create({ initiator: 'Servidor', started: new Date() });
 
     try {
       await this.scrapingService.mainScrape(tracker);

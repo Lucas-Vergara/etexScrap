@@ -7,8 +7,10 @@ export default async function construmartScrape(input: {
 }): Promise<any> {
   const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox'] });
   const results: any[] = [];
-  const date = input.date
-  const day: string = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`
+  const day: string = input.date.getDate().toString()
+  const month: string = (input.date.getMonth() + 1).toString()
+  const year: string = (input.date.getFullYear()).toString()
+  const date: string = `${day}-${month}-${year}`
   const page = await browser.newPage();
   page.setDefaultNavigationTimeout(0);
   // await page.goto('https://www.construmart.cl/');
@@ -33,8 +35,12 @@ export default async function construmartScrape(input: {
         });
 
         const result = {
-          datetime: date,
-          date: day,
+          day,
+          month,
+          year,
+          date,
+          category: product.category,
+          region: product.region,
           name: product.name,
           brand: product.brand,
           distributor: product.distributor,

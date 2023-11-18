@@ -3,4 +3,6 @@ export interface BaseProduct {
   name: string;
   brand: string;
   distributor: string;
+  category: string;
+  region: string
 }

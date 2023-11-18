@@ -27,7 +27,7 @@ export class ScrapingService {
 
   @Cron('0 2 * * *', { timeZone: 'America/Santiago' })
   async handleScraping() {
-    const tracker = await this.scrapingTrackerService.create();
+    const tracker = await this.scrapingTrackerService.create({ initiator: 'Servidor', started: new Date() });
     await this.mainScrape(tracker);
   }
 
