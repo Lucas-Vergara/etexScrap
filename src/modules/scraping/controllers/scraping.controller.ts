@@ -80,7 +80,7 @@ export class ScrapingController {
     }
   }
 
-  @UseGuards(JwtAuthGuard)
+  //  @UseGuards(JwtAuthGuard)
   @Get('api/last-tracker')
   async getLastTracker() {
     try {
