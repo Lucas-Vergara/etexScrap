@@ -45,21 +45,27 @@ export class ScrapingController {
 
       // Agregar encabezados
       worksheet.columns = [
-        { header: 'Fecha', key: 'date', width: 15 },
+        { header: 'Día', key: 'day', width: 15 },
+        { header: 'Mes', key: 'month', width: 15 },
+        { header: 'Año', key: 'year', width: 15 },
         { header: 'Nombre', key: 'name', width: 30 },
         { header: 'Marca', key: 'brand', width: 15 },
         { header: 'Distribuidor', key: 'distributor', width: 15 },
+        { header: 'Región', key: 'region', width: 15 },
         { header: 'Título Web', key: 'web_title', width: 40 },
-        { header: 'SKU/URL', key: 'sku', width: 15 },
+        { header: 'URL', key: 'sku', width: 15 },
         { header: 'Precio', key: 'price', width: 15 },
       ];
 
       products.forEach((product) => {
         worksheet.addRow({
-          date: product.date,
+          day: product.day,
+          month: product.month,
+          year: product.year,
           name: product.name,
           brand: product.brand,
           distributor: product.distributor,
+          region: product.region,
           web_title: product.web_title,
           sku: product.sku,
           price: product.price,

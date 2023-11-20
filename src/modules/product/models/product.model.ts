@@ -38,6 +38,9 @@ export class Product extends Document {
   @Prop({ required: true })
   price: Number;
 
+  @Prop({ required: true })
+  region: string;
+
 }
 
 export const ProductSchema = SchemaFactory.createForClass(Product);
