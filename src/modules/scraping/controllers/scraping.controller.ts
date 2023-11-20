@@ -1,4 +1,4 @@
-import { Controller, Get, Res, UseGuards } from '@nestjs/common';
+import { Controller, Get, Req, Res, UseGuards } from '@nestjs/common';
 import { ScrapingService } from '../services/scraping.service';
 import * as puppeteer from 'puppeteer';
 import * as ExcelJS from 'exceljs';
@@ -21,10 +21,9 @@ export class ScrapingController {
 
   @UseGuards(JwtAuthGuard)
   @Get('api/ejecutar-script')
-  async runScrape() {
-    // const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox'] });
-
-    const tracker = await this.scrapingTrackerService.create({ initiator: 'Servidor', started: new Date() });
+  async runScrape(@Req() request) {
+    const user = request.user;
+    const tracker = await this.scrapingTrackerService.create({ initiator: user.username, started: new Date() });
 
     try {
       await this.scrapingService.mainScrape(tracker);
