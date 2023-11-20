@@ -19,6 +19,7 @@ export class ScrapingController {
     private readonly scrapingTrackerService: ScrapingTrackerService,
   ) {}
 
+  @UseGuards(JwtAuthGuard)
   @Get('api/ejecutar-script')
   async runScrape() {
     // const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox'] });
@@ -34,6 +35,7 @@ export class ScrapingController {
 
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get('api/download-excel')
   async downloadExcel(@Res() res: Response) {
     try {
@@ -80,7 +82,7 @@ export class ScrapingController {
     }
   }
 
-  //  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Get('api/last-tracker')
   async getLastTracker() {
     try {
