@@ -1,9 +1,13 @@
 import * as puppeteer from 'puppeteer';
 import { BaseProduct } from '../../product/models/baseProduct.interface'
+import { ScrapingTracker } from '../models/scrapingTracker.model';
+import { ScrapingTrackerService } from '../services/scrapingTracker.service';
 
 export default async function yolitoScrape(input: {
   products: BaseProduct[],
-  date: Date;
+  date: Date,
+  tracker: ScrapingTracker,
+  scrapingTrackerService: ScrapingTrackerService
 }): Promise<any> {
   const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox'] });
   const results: any[] = [];
@@ -16,7 +20,7 @@ export default async function yolitoScrape(input: {
   const base_url = "https://www.yolito.cl/Home/SetDeliveryMethod?isDelivery=True&idComuna="
   await page.goto(base_url + "Las Condes")
   await page.goto("https://www.yolito.cl/")
-  const maxTries = 15;
+  const maxTries = 10;
   let currentTry = 0;
 
   for (const product of input.products) {
@@ -56,6 +60,12 @@ export default async function yolitoScrape(input: {
         console.log(result);
         break;
       } catch (error) {
+        if (currentTry + 1 === maxTries) {
+          await input.scrapingTrackerService.pushToMissingProducts(
+            input.tracker._id,
+            { product: `${product.name} | ${product.brand} | ${product.distributor}`, product_url: product.sku }
+          );
+        }
         currentTry++;
         console.error(error);
         console.log(currentTry);

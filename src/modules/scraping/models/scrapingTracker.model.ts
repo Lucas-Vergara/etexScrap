@@ -27,6 +27,13 @@ export class ScrapingTracker extends Document {
 
   @Prop({ default: null })
   errorMessage: string;
+
+  @Prop({ default: null })
+  missingProducts: { product: string; product_url: string }[]
+
+  @Prop({ default: null })
+  productsAmount: number;
+
 }
 
 export const ScrapingTrackerSchema = SchemaFactory.createForClass(ScrapingTracker);

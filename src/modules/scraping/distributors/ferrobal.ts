@@ -1,9 +1,13 @@
 import * as puppeteer from 'puppeteer';
 import { BaseProduct } from '../../product/models/baseProduct.interface'
+import { ScrapingTracker } from '../models/scrapingTracker.model';
+import { ScrapingTrackerService } from '../services/scrapingTracker.service';
 
 export default async function ferrobalScrape(input: {
   products: BaseProduct[],
-  date: Date;
+  date: Date,
+  tracker: ScrapingTracker,
+  scrapingTrackerService: ScrapingTrackerService
 }): Promise<any> {
   const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox'] });
   const results: any[] = [];
@@ -14,7 +18,7 @@ export default async function ferrobalScrape(input: {
   const page = await browser.newPage();
   page.setDefaultNavigationTimeout(0);
 
-  const maxTries = 15;
+  const maxTries = 10;
   let currentTry = 0;
 
 
@@ -51,6 +55,12 @@ export default async function ferrobalScrape(input: {
         console.log(result);
         break;
       } catch (error) {
+        if (currentTry + 1 === maxTries) {
+          await input.scrapingTrackerService.pushToMissingProducts(
+            input.tracker._id,
+            { product: `${product.name} | ${product.brand} | ${product.distributor}`, product_url: product.sku }
+          );
+        }
         currentTry++;
         console.error(error);
         console.log(currentTry);

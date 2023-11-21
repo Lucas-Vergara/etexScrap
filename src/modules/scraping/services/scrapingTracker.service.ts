@@ -39,6 +39,14 @@ export class ScrapingTrackerService {
     );
   }
 
+  async pushToMissingProducts(id, newProduct: { product: string, product_url: string }): Promise<ScrapingTracker> {
+    return this.scrapingTrackerModel.findByIdAndUpdate(
+      id,
+      { $push: { missingProducts: newProduct } },
+      { new: true },
+    );
+  }
+
   async findLastTracker(): Promise<ScrapingTracker | null> {
     return this.scrapingTrackerModel.findOne().sort({ _id: -1 }).exec();
   }

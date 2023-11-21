@@ -1,9 +1,13 @@
 import * as puppeteer from 'puppeteer';
 import { BaseProduct } from '../../product/models/baseProduct.interface'
+import { ScrapingTracker } from '../models/scrapingTracker.model';
+import { ScrapingTrackerService } from '../services/scrapingTracker.service';
 
 export default async function prodalamScrape(input: {
   products: BaseProduct[],
-  date: Date;
+  date: Date,
+  tracker: ScrapingTracker,
+  scrapingTrackerService: ScrapingTrackerService
 }): Promise<any> {
   const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox'] });
   const results: any[] = [];
@@ -13,7 +17,7 @@ export default async function prodalamScrape(input: {
   const date: string = `${day}-${month}-${year}`
   const page = await browser.newPage();
   page.setDefaultNavigationTimeout(0);
-  const maxTries = 15;
+  const maxTries = 10;
   let currentTry = 0;
 
   for (const product of input.products) {
@@ -21,7 +25,7 @@ export default async function prodalamScrape(input: {
     await page.goto(product.sku);
     while (currentTry < maxTries) {
       try {
-        await page.waitForSelector('span#gtm_price', { timeout: 15000 });
+        await page.waitForSelector('span#gtm_price', { timeout: 10000 });
 
         const price = await page.$eval('span#gtm_price', (element) => {
           return element.textContent;
@@ -54,6 +58,12 @@ export default async function prodalamScrape(input: {
         console.log(result);
         break;
       } catch (error) {
+        if (currentTry + 1 === maxTries) {
+          await input.scrapingTrackerService.pushToMissingProducts(
+            input.tracker._id,
+            { product: `${product.name} | ${product.brand} | ${product.distributor}`, product_url: product.sku }
+          );
+        }
         currentTry++;
         console.error(error);
         console.log(currentTry);

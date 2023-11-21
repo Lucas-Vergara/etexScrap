@@ -34,6 +34,7 @@ export class ScrapingService {
   async mainScrape(tracker: ScrapingTracker) {
     try {
       const products = await this.baseProductService.findAll();
+      let productsAmount = 0
       const date = new Date()
       const sodimanProducts = filterProductsByDistributor(products, 'Sodimac')
       const yolitoProducts = filterProductsByDistributor(products, 'Yolito')
@@ -50,96 +51,135 @@ export class ScrapingService {
       let results = await construmartScrape({
         products: construmartProducts,
         date: date,
+        tracker: tracker,
+        scrapingTrackerService: this.scrapingTrackerService,
       });
       for (const result of results) {
         await this.productService.createOrUpdate(result);
       }
+      productsAmount += results.length
 
       await this.scrapingTrackerService.update(tracker._id, { progress: 'Construplaza' });
       results = await construplazaScrape({
         products: construplazaProducts,
         date: date,
+        tracker: tracker,
+        scrapingTrackerService: this.scrapingTrackerService
+
       });
       for (const result of results) {
         await this.productService.createOrUpdate(result);
       }
+      productsAmount += results.length
 
       await this.scrapingTrackerService.update(tracker._id, { progress: 'Easy' });
       results = await easyScrape({
         products: easyProducts,
         date: date,
+        tracker: tracker,
+        scrapingTrackerService: this.scrapingTrackerService
+
       });
       for (const result of results) {
         await this.productService.createOrUpdate(result);
       }
+      productsAmount += results.length
 
       await this.scrapingTrackerService.update(tracker._id, { progress: 'Ferrobal' });
       results = await ferrobalScrape({
         products: ferrobalProducts,
         date: date,
+        tracker: tracker,
+        scrapingTrackerService: this.scrapingTrackerService
+
       });
       for (const result of results) {
         await this.productService.createOrUpdate(result);
       }
+      productsAmount += results.length
 
       await this.scrapingTrackerService.update(tracker._id, { progress: 'Homecenter' });
       results = await homecenterScrape({
         products: sodimanProducts,
         date: date,
+        tracker: tracker,
+        scrapingTrackerService: this.scrapingTrackerService
+
       });
       for (const result of results) {
         await this.productService.createOrUpdate(result);
       }
+      productsAmount += results.length
 
       await this.scrapingTrackerService.update(tracker._id, { progress: 'Imperial' });
       results = await imperialScrape({
         products: imperialProducts,
         date: date,
+        tracker: tracker,
+        scrapingTrackerService: this.scrapingTrackerService
+
       });
       for (const result of results) {
         await this.productService.createOrUpdate(result);
       }
+      productsAmount += results.length
 
       await this.scrapingTrackerService.update(tracker._id, { progress: 'Prodalam' });
       results = await prodalamScrape({
         products: prodalamProducts,
         date: date,
+        tracker: tracker,
+        scrapingTrackerService: this.scrapingTrackerService
       });
       for (const result of results) {
         await this.productService.createOrUpdate(result);
       }
+      productsAmount += results.length
 
       await this.scrapingTrackerService.update(tracker._id, { progress: 'Toso' });
       results = await tosoScrape({
         products: tosoProducts,
         date: date,
+        tracker: tracker,
+        scrapingTrackerService: this.scrapingTrackerService
+
       });
       for (const result of results) {
         await this.productService.createOrUpdate(result);
       }
+      productsAmount += results.length
 
       await this.scrapingTrackerService.update(tracker._id, { progress: 'Weitzler' });
       results = await weitzlerScrape({
         products: weitzlerProducts,
         date: date,
+        tracker: tracker,
+        scrapingTrackerService: this.scrapingTrackerService
+
       });
       for (const result of results) {
         await this.productService.createOrUpdate(result);
       }
+      productsAmount += results.length
 
       await this.scrapingTrackerService.update(tracker._id, { progress: 'Yolito' });
       results = await yolitoScrape({
         products: yolitoProducts,
         date: date,
+        tracker: tracker,
+        scrapingTrackerService: this.scrapingTrackerService
+
       });
       for (const result of results) {
         await this.productService.createOrUpdate(result);
       }
+      productsAmount += results.length
 
       const updates = {
         status: ScrapingServiceStatus.COMPLETED,
         completed: new Date,
-        progress: 'finished'
+        progress: 'finished',
+        productsAmount
       }
       await this.scrapingTrackerService.update(tracker._id, updates);
     } catch (error) {
