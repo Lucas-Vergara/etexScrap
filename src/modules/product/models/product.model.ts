@@ -41,6 +41,8 @@ export class Product extends Document {
   @Prop({ required: true })
   region: string;
 
+  @Prop({ required: true })
+  category: string;
 }
 
 export const ProductSchema = SchemaFactory.createForClass(Product);
