@@ -8,6 +8,7 @@ import { ConfigModule } from '@nestjs/config';
 import { ScrapingModule } from './modules/scraping/scraping.module';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './modules/users/users.module';
+import { ScreenshotModule } from './modules/screenshot/screenshot.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { UsersModule } from './modules/users/users.module';
     ScrapDataModule,
     ProductModule,
     ScrapingModule,
+    ScreenshotModule,
     AuthModule,
     UsersModule
   ],
