@@ -1,20 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { BaseProductService } from 'src/modules/product/services/baseProduct.service';
 import { BaseProduct } from 'src/modules/product/models/baseProduct.interface';
-import homecenterScrape from '../distributors/homecenter';
 import { ProductService } from 'src/modules/product/services/product.service';
-import yolitoScrape from '../distributors/yolito';
-import ferrobalScrape from '../distributors/ferrobal';
-import { Cron, CronExpression } from '@nestjs/schedule';
-import construmartScrape from '../distributors/construmart';
-import construplazaScrape from '../distributors/construplaza';
-import easyScrape from '../distributors/easy';
-import imperialScrape from '../distributors/imperial';
-import tosoScrape from '../distributors/toso';
-import weitzlerScrape from '../distributors/weitzler';
-import prodalamScrape from '../distributors/prodalam';
+import { Cron } from '@nestjs/schedule';
 import { ScrapingServiceStatus, ScrapingTracker } from '../models/scrapingTracker.model';
 import { ScrapingTrackerService } from './scrapingTracker.service';
+import dynamicScrape from './dynamicScrape';
 
 
 @Injectable()
@@ -34,146 +25,39 @@ export class ScrapingService {
   async mainScrape(tracker: ScrapingTracker) {
     try {
       const products = await this.baseProductService.findAll();
-      let productsAmount = 0
       const date = new Date()
-      const sodimanProducts = filterProductsByDistributor(products, 'Sodimac')
-      const yolitoProducts = filterProductsByDistributor(products, 'Yolito')
-      const ferrobalProducts = filterProductsByDistributor(products, 'Ferrobal')
-      const construmartProducts = filterProductsByDistributor(products, 'Construmart')
-      const construplazaProducts = filterProductsByDistributor(products, 'Construplaza')
-      const easyProducts = filterProductsByDistributor(products, 'Easy')
-      const imperialProducts = filterProductsByDistributor(products, 'Imperial')
-      const tosoProducts = filterProductsByDistributor(products, 'Toso')
-      const weitzlerProducts = filterProductsByDistributor(products, 'Weitzler')
-      const prodalamProducts = filterProductsByDistributor(products, 'Prodalam')
+      let productsAmount = 0;
 
-      await this.scrapingTrackerService.update(tracker._id, { progress: 'Construmart' });
-      let results = await construmartScrape({
-        products: construmartProducts,
-        date: date,
-        tracker: tracker,
-        scrapingTrackerService: this.scrapingTrackerService,
-      });
-      for (const result of results) {
-        await this.productService.createOrUpdate(result);
+      const distributors = [
+        { name: 'Construmart', products: filterProductsByDistributor(products, 'Construmart'), priceSelector: '.vtex-product-price-1-x-sellingPriceValue', titleSelector: '.vtex-store-components-3-x-productBrand' },
+        { name: 'Construplaza', products: filterProductsByDistributor(products, 'Construplaza'), priceSelector: 'span.price', titleSelector: 'div.name' },
+        { name: 'Easy', products: filterProductsByDistributor(products, 'Easy'), priceSelector: 'div.easycl-precio-cencosud-0-x-lastPrice', titleSelector: 'span.vtex-store-components-3-x-productBrand' },
+        { name: 'Ferrobal', products: filterProductsByDistributor(products, 'Ferrobal'), priceSelector: '', titleSelector: '', },
+        { name: 'Homecenter', products: filterProductsByDistributor(products, 'Sodimac'), priceSelector: '', titleSelector: '' },
+        { name: 'Imperial', products: filterProductsByDistributor(products, 'Imperial'), priceSelector: 'p[data-bind="currency: {price: $widgetViewModel.product().productListPrice, currencyObj: $widgetViewModel.site().selectedPriceListGroup().currency}"]', titleSelector: 'h2[data-bind="text: $widgetViewModel.product().displayName"]' },
+        { name: 'Prodalam', products: filterProductsByDistributor(products, 'Prodalam'), priceSelector: 'span#gtm_price', titleSelector: 'div.detail__title' },
+        { name: 'Toso', products: filterProductsByDistributor(products, 'Toso'), priceSelector: '', titleSelector: '' },
+        { name: 'Weitzler', products: filterProductsByDistributor(products, 'Weitzler'), priceSelector: 'p.price.product-page-price', titleSelector: 'h1.product-title.product_title.entry-title' },
+        { name: 'Yolito', products: filterProductsByDistributor(products, 'Yolito'), priceSelector: '', titleSelector: '' },
+      ];
+
+      for (const distributor of distributors) {
+        await this.scrapingTrackerService.update(tracker._id, { progress: distributor.name });
+
+        const results = await dynamicScrape({
+          products: distributor.products,
+          date,
+          tracker,
+          scrapingTrackerService: this.scrapingTrackerService,
+          priceSelector: distributor.priceSelector,
+          titleSelector: distributor.titleSelector,
+        });
+
+        for (const result of results) {
+          await this.productService.createOrUpdate(result);
+        }
+        productsAmount += results.length;
       }
-      productsAmount += results.length
-
-      await this.scrapingTrackerService.update(tracker._id, { progress: 'Construplaza' });
-      results = await construplazaScrape({
-        products: construplazaProducts,
-        date: date,
-        tracker: tracker,
-        scrapingTrackerService: this.scrapingTrackerService
-
-      });
-      for (const result of results) {
-        await this.productService.createOrUpdate(result);
-      }
-      productsAmount += results.length
-
-      await this.scrapingTrackerService.update(tracker._id, { progress: 'Easy' });
-      results = await easyScrape({
-        products: easyProducts,
-        date: date,
-        tracker: tracker,
-        scrapingTrackerService: this.scrapingTrackerService
-
-      });
-      for (const result of results) {
-        await this.productService.createOrUpdate(result);
-      }
-      productsAmount += results.length
-
-      await this.scrapingTrackerService.update(tracker._id, { progress: 'Ferrobal' });
-      results = await ferrobalScrape({
-        products: ferrobalProducts,
-        date: date,
-        tracker: tracker,
-        scrapingTrackerService: this.scrapingTrackerService
-
-      });
-      for (const result of results) {
-        await this.productService.createOrUpdate(result);
-      }
-      productsAmount += results.length
-
-      await this.scrapingTrackerService.update(tracker._id, { progress: 'Homecenter' });
-      results = await homecenterScrape({
-        products: sodimanProducts,
-        date: date,
-        tracker: tracker,
-        scrapingTrackerService: this.scrapingTrackerService
-
-      });
-      for (const result of results) {
-        await this.productService.createOrUpdate(result);
-      }
-      productsAmount += results.length
-
-      await this.scrapingTrackerService.update(tracker._id, { progress: 'Imperial' });
-      results = await imperialScrape({
-        products: imperialProducts,
-        date: date,
-        tracker: tracker,
-        scrapingTrackerService: this.scrapingTrackerService
-
-      });
-      for (const result of results) {
-        await this.productService.createOrUpdate(result);
-      }
-      productsAmount += results.length
-
-      await this.scrapingTrackerService.update(tracker._id, { progress: 'Prodalam' });
-      results = await prodalamScrape({
-        products: prodalamProducts,
-        date: date,
-        tracker: tracker,
-        scrapingTrackerService: this.scrapingTrackerService
-      });
-      for (const result of results) {
-        await this.productService.createOrUpdate(result);
-      }
-      productsAmount += results.length
-
-      await this.scrapingTrackerService.update(tracker._id, { progress: 'Toso' });
-      results = await tosoScrape({
-        products: tosoProducts,
-        date: date,
-        tracker: tracker,
-        scrapingTrackerService: this.scrapingTrackerService
-
-      });
-      for (const result of results) {
-        await this.productService.createOrUpdate(result);
-      }
-      productsAmount += results.length
-
-      await this.scrapingTrackerService.update(tracker._id, { progress: 'Weitzler' });
-      results = await weitzlerScrape({
-        products: weitzlerProducts,
-        date: date,
-        tracker: tracker,
-        scrapingTrackerService: this.scrapingTrackerService
-
-      });
-      for (const result of results) {
-        await this.productService.createOrUpdate(result);
-      }
-      productsAmount += results.length
-
-      await this.scrapingTrackerService.update(tracker._id, { progress: 'Yolito' });
-      results = await yolitoScrape({
-        products: yolitoProducts,
-        date: date,
-        tracker: tracker,
-        scrapingTrackerService: this.scrapingTrackerService
-
-      });
-      for (const result of results) {
-        await this.productService.createOrUpdate(result);
-      }
-      productsAmount += results.length
 
       const updates = {
         status: ScrapingServiceStatus.COMPLETED,

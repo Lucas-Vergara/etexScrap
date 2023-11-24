@@ -1,14 +1,27 @@
-import * as puppeteer from 'puppeteer';
-import { BaseProduct } from '../../product/models/baseProduct.interface'
-import { ScrapingTracker } from '../models/scrapingTracker.model';
-import { ScrapingTrackerService } from '../services/scrapingTracker.service';
+import { BaseProduct } from "src/modules/product/models/baseProduct.interface";
+import { ScrapingTracker } from "../models/scrapingTracker.model";
+import { ScrapingTrackerService } from "./scrapingTracker.service";
+import puppeteer from "puppeteer";
+import ferrobalScrape from "../scripts/ferrobal";
+import homecenterScrape from "../scripts/homecenter";
+import tosoScrape from "../scripts/toso";
+import yolitoScrape from "../scripts/yolito";
 
-export default async function imperialScrape(input: {
+
+export default async function dynamicScrape(input: {
   products: BaseProduct[],
   date: Date,
   tracker: ScrapingTracker,
-  scrapingTrackerService: ScrapingTrackerService
+  scrapingTrackerService: ScrapingTrackerService,
+  priceSelector: string,
+  titleSelector: string,
 }): Promise<any> {
+
+  // retornar casos especiales
+  if (distributorScrapers[input.products[0].distributor]) {
+    return await distributorScrapers[input.products[0].distributor]({ products: input.products, date: input.date, tracker: input.tracker, scrapingTrackerService: input.scrapingTrackerService, });
+  }
+
   const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox'] });
   const results: any[] = [];
   const day: string = input.date.getDate().toString()
@@ -18,21 +31,20 @@ export default async function imperialScrape(input: {
   const page = await browser.newPage();
   page.setDefaultNavigationTimeout(0);
   const maxTries = 10;
-  let currentTry = 0;
 
   for (const product of input.products) {
-    currentTry = 0
+    let currentTry = 0;
     await page.goto(product.sku);
     while (currentTry < maxTries) {
       try {
-        await page.waitForSelector('h2[data-bind="text: $widgetViewModel.product().displayName"]', { timeout: 10000 });
+        await page.waitForSelector(input.priceSelector, { timeout: 10000 });
 
-        const webTitle = await page.$eval('h2[data-bind="text: $widgetViewModel.product().displayName"]', (element) => {
-          return element.textContent;
+        let price = await page.$eval(input.priceSelector, (element) => {
+          return element.textContent.trim()
         });
 
-        const price = await page.$eval('p[data-bind="currency: {price: $widgetViewModel.product().productListPrice, currencyObj: $widgetViewModel.site().selectedPriceListGroup().currency}"]', (element) => {
-          return element.textContent;
+        const webTitle = await page.$eval(input.titleSelector, (element) => {
+          return element.textContent.trim();
         });
 
         const result = {
@@ -45,7 +57,7 @@ export default async function imperialScrape(input: {
           name: product.name,
           brand: product.brand,
           distributor: product.distributor,
-          web_title: webTitle.trim().replace(/\\n/g, ''),
+          web_title: webTitle,
           sku: product.sku,
           presence: true,
           price: parseInt(price.replace(/[^\d]/g, '')),
@@ -71,3 +83,11 @@ export default async function imperialScrape(input: {
   await browser.close();
   return results;
 }
+
+const distributorScrapers = {
+  Ferrobal: ferrobalScrape,
+  Sodimac: homecenterScrape,
+  Toso: tosoScrape,
+  Yolito: yolitoScrape,
+};
+
