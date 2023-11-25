@@ -51,4 +51,20 @@ export class ScrapingTrackerService {
     return this.scrapingTrackerModel.findOne().sort({ _id: -1 }).exec();
   }
 
+  async getRecentMissingProducts(): Promise<{ _id: string, missingProducts: any[] }[]> {
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+    const recentTrackers = await this.scrapingTrackerModel
+      .find({ started: { $gte: thirtyDaysAgo } })
+      .exec();
+
+    const result = recentTrackers.reduce((acc, { missingProducts }) => {
+      return acc.concat(missingProducts);
+    }, []);
+
+    return result;
+  }
+
+
 }
