@@ -102,10 +102,21 @@ export class ScrapingController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Get('api/recent-missing-products')
-  async getRecentMissingProducts() {
+  @Get('api/monthly-missing-products')
+  async monthlyMissingProducts() {
     try {
-      return await this.scrapingTrackerService.getRecentMissingProducts();
+      return await this.scrapingTrackerService.monthlyMissingProducts();
+    } catch (error) {
+      console.error('Error in getLastTracker:', error);
+      throw error;
+    }
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('api/daily-missing-products')
+  async dailyMissingProducts() {
+    try {
+      return await this.scrapingTrackerService.dailyMissingProducts();
     } catch (error) {
       console.error('Error in getLastTracker:', error);
       throw error;
