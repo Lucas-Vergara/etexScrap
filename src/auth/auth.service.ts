@@ -2,6 +2,7 @@
 import { Injectable } from '@nestjs/common';
 import { UsersService } from 'src/modules/users/users.service';
 import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
@@ -28,5 +29,14 @@ export class AuthService {
     return {
       access_token: this.jwtService.sign(payload, { expiresIn }),
     };
+  }
+
+  async comparePassword(plainPassword: string, hashedPassword: string): Promise<boolean> {
+    try {
+      return await bcrypt.compare(plainPassword, hashedPassword);
+    } catch (error) {
+      console.error('Error al comparar contraseñas:', error);
+      return false;
+    }
   }
 }

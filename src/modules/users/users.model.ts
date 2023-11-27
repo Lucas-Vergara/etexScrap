@@ -6,10 +6,10 @@ import { Document } from "mongoose";
 export class User extends Document {
 
   @Prop({ required: true })
-  email: String;
+  email: string;
 
   @Prop({ required: true })
-  password: String
+  password: string
 
 }
 
