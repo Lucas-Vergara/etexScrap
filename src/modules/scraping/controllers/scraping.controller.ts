@@ -1,12 +1,10 @@
 import { Controller, Get, Req, Res, UseGuards } from '@nestjs/common';
 import { ScrapingService } from '../services/scraping.service';
-import * as puppeteer from 'puppeteer';
 import * as ExcelJS from 'exceljs';
 import { Product } from 'src/modules/product/models/product.model';
 import { ProductService } from 'src/modules/product/services/product.service';
 import { Response } from 'express';
 import { ScrapingTrackerService } from '../services/scrapingTracker.service';
-import { ScrapingTracker, ScrapingServiceStatus } from '../models/scrapingTracker.model';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
 
