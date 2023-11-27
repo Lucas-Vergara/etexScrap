@@ -108,7 +108,7 @@ export class ScrapingTrackerService {
 
     // Mapear y agrupar los trackers por día
     const groupedTrackers = monthlyTrackers.reduce((acc, tracker) => {
-      const dayKey = tracker.started.toISOString().split('T')[0]; // Obtener la fecha como clave
+      const dayKey = tracker.started.toLocaleDateString('es-CL'); // Obtener la fecha como clave
       acc[dayKey] = acc[dayKey] || [];
       acc[dayKey].push(tracker);
       return acc;
