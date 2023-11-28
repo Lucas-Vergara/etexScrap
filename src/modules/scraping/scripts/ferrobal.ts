@@ -2,6 +2,7 @@ import * as puppeteer from 'puppeteer';
 import { BaseProduct } from '../../product/models/baseProduct.interface'
 import { ScrapingTracker } from '../models/scrapingTracker.model';
 import { ScrapingTrackerService } from '../services/scrapingTracker.service';
+import { error } from 'console';
 
 export default async function ferrobalScrape(input: {
   products: BaseProduct[],
@@ -29,11 +30,10 @@ export default async function ferrobalScrape(input: {
       try {
         const priceElement = await page.$('[name="twitter:data1"]');
         const price = parseInt(
-          (await priceElement?.evaluate((element) => element.getAttribute('content')))?.replace(".", "").replace("$", "") || '0',
-          10
-        );
+          (await priceElement?.evaluate((element) => element.getAttribute('content')))?.replace(".", "").replace("$", ""));
         const nameElement = await page.$('.entry-title');
         const webTitle = await nameElement?.evaluate((element) => element.textContent);
+        if (Number.isNaN(price)) throw error
 
         const result = {
           day,

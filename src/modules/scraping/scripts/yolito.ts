@@ -2,6 +2,7 @@ import * as puppeteer from 'puppeteer';
 import { BaseProduct } from '../../product/models/baseProduct.interface'
 import { ScrapingTracker } from '../models/scrapingTracker.model';
 import { ScrapingTrackerService } from '../services/scrapingTracker.service';
+import { error } from 'console';
 
 export default async function yolitoScrape(input: {
   products: BaseProduct[],
@@ -35,7 +36,8 @@ export default async function yolitoScrape(input: {
         // Obtiene el precio
         const priceElement = await page.$('span[style="font-size:30px;font-weight:bold"]');
         const priceText = await priceElement?.evaluate((element) => element.textContent);
-        const price = parseInt(priceText?.replace(".", "").replace("$", "") || '0', 10);
+        const price = parseInt(priceText?.replace(".", "").replace("$", ""));
+        if (Number.isNaN(price)) throw error
 
         // Obtiene el nombre
         const nameElement = await page.$('.s_info-name[itemprop="name"]');
