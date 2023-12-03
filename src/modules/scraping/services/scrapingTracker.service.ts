@@ -86,7 +86,7 @@ export class ScrapingTrackerService {
         // Si es el último tracker y hay productos comunes, agregarlos a commonMissingProducts
         if (i === trackers.length - 1) {
           commonProducts.forEach(productKey => {
-            const [product, product_url] = productKey.split('-');
+            const [product, product_url] = productKey.split(/(?=https)/);
             commonMissingProducts.push({ product, product_url });
           });
         }
