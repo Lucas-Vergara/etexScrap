@@ -1,6 +1,6 @@
 # Proyecto de Scraping para ETEX 🚀
 
-Este proyecto utiliza NestJs para realizar scraping a materiales de construcción para la empresa ETEX.
+Este proyecto utiliza NestJs y Puppeteer para realizar scraping a materiales de construcción para la empresa ETEX. Además, sirve como backend para una aplicación web desarrollada con React.
 
 ## Uso Exclusivo 🛑
 
