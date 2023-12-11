@@ -42,4 +42,10 @@ export class AppController {
   async deleteUser(@Param('id') userId: string): Promise<void> {
     return this.userService.deleteUser(userId);
   }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('/auth/user')
+  getUser(@Request() req) {
+    return req.user
+  }
 }
