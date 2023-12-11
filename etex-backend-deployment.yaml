@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: etex-backend-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: etex-backend
+  template:
+    metadata:
+      labels:
+        app: etex-backend
+    spec:
+      containers:
+        - name: etex-backend
+          image: lucasvergara/etex-backend:1.0
+          ports:
+            - containerPort: 3000
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: etex-backend-service
+spec:
+  selector:
+    app: etex-backend
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3001
+  type: LoadBalancer
