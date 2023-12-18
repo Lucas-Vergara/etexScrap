@@ -28,6 +28,7 @@ export class AppController {
     };
   }
 
+  @UseGuards(JwtAuthGuard)
   @Post('/auth/register')
   async register(@Body() createUserDto: CreateUserDto) {
     return this.userService.createUser(createUserDto);
