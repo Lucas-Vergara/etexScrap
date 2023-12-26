@@ -43,4 +43,23 @@ export class UsersService {
     return result
   }
 
+  async changePassword(changePasswordDto): Promise<string> {
+    const { email, newPassword } = changePasswordDto;
+
+    const user = await this.userModel.findOne({ email: email });
+    if (!user) {
+      throw new NotFoundException(`Usuario con correo electrónico ${email} no encontrado`);
+    }
+
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
+
+    user.password = hashedPassword;
+    await user.save();
+
+    return 'Contraseña actualizada exitosamente';
+  }
+
+
+
 }
