@@ -3,9 +3,7 @@ import { JwtAuthGuard } from './auth/jwt-auth.guard';
 import { LocalAuthGuard } from './auth/local-auth.guard';
 import { AuthService } from './auth/auth.service';
 import { UsersService } from './modules/users/users.service';
-import { CreateUserDto } from './modules/users/dto/createUser.dto';
-import { User } from './modules/users/users.model';
-import { changePasswordDto } from './modules/users/dto/changePassword.dto';
+import { CreateUserDto } from './modules/users/dtos/createUser.dto';
 import { GetUserEmail } from './auth/get-user.decorator';
 
 @Controller('api')

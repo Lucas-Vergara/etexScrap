@@ -23,16 +23,4 @@ export class ProductController {
     }
   }
 
-  @Get('base_products')
-  async findAllBaseProducts() {
-    try {
-      const result = await this.baseProductService.findAll();
-      return result;
-    } catch (error) {
-      console.error('Error in findAll:', error);
-      throw error;
-    }
-  }
-
-
 }

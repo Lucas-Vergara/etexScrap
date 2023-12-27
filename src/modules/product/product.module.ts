@@ -5,9 +5,10 @@ import { ProductController } from './controllers/product.controller';
 import { ProductService } from './services/product.service';
 import { BaseProductService } from './services/baseProduct.service';
 import { BaseProduct, BaseProductSchema } from './models/baseProduct.model';
+import { BaseProductController } from './controllers/baseProduct.controller';
 
 @Module({
-  controllers: [ProductController],
+  controllers: [ProductController, BaseProductController],
   providers: [ProductService, BaseProductService],
   imports: [MongooseModule.forFeature([
     { name: Product.name, schema: ProductSchema },
