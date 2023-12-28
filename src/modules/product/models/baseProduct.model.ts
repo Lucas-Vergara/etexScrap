@@ -21,6 +21,9 @@ export class BaseProduct extends Document {
 
   @Prop({ required: true })
   region: string;
+
+  @Prop({ required: true })
+  format: string;
 }
 
 export const BaseProductSchema = SchemaFactory.createForClass(BaseProduct);

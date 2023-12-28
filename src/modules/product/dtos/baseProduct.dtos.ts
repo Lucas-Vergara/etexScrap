@@ -5,6 +5,7 @@ export class CreateBaseProductDto {
   readonly distributor: string;
   readonly category: string;
   readonly region: string;
+  readonly format: string;
 }
 
 export class UpdateBaseProductDto {
@@ -15,6 +16,7 @@ export class UpdateBaseProductDto {
   readonly distributor?: string;
   readonly category?: string;
   readonly region?: string;
+  readonly format?: string;
 }
 
 export class DeleteBaseProductDto {
