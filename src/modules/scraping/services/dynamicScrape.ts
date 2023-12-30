@@ -53,6 +53,7 @@ export default async function dynamicScrape(input: {
           year,
           date,
           category: product.category,
+          format: product.format,
           region: product.region,
           name: product.name,
           brand: product.brand,

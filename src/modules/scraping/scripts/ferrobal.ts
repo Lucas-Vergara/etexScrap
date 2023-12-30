@@ -40,6 +40,7 @@ export default async function ferrobalScrape(input: {
           month,
           year,
           date,
+          format: product.format,
           category: product.category,
           region: product.region,
           name: product.name,

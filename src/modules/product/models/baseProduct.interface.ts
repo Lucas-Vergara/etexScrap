@@ -4,5 +4,6 @@ export interface BaseProduct {
   brand: string;
   distributor: string;
   category: string;
-  region: string
+  region: string;
+  format: string
 }

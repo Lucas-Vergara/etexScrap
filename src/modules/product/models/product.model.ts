@@ -44,7 +44,7 @@ export class Product extends Document {
   @Prop({ required: true })
   category: string;
 
-  @Prop({ required: true })
+  @Prop()
   format: string;
 }
 

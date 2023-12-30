@@ -22,7 +22,7 @@ export class BaseProduct extends Document {
   @Prop({ required: true })
   region: string;
 
-  @Prop({ required: true })
+  @Prop()
   format: string;
 }
 

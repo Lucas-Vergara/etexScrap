@@ -7,14 +7,14 @@ import singleScrape from 'src/modules/scraping/services/singleScrape';
 
 @Injectable()
 export class BaseProductService {
-  constructor(@InjectModel('BaseProduct') private readonly productModel: Model<BaseProduct>) {}
+  constructor(@InjectModel('BaseProduct') private readonly baseProductModel: Model<BaseProduct>) {}
 
   async findAll(): Promise<BaseProduct[]> {
-    return this.productModel.find().exec();
+    return this.baseProductModel.find().exec();
   }
 
   async create(createProductDto: any): Promise<BaseProduct> {
-    const newProduct = new this.productModel(createProductDto);
+    const newProduct = new this.baseProductModel(createProductDto);
     try {
       // Realiza el scraping del producto
       const scrapeResult = await singleScrape(newProduct);
@@ -30,7 +30,7 @@ export class BaseProductService {
   }
 
   async update(productId: string, updateProductDto: any): Promise<BaseProduct> {
-    const updatedProduct = await this.productModel.findByIdAndUpdate(productId, updateProductDto, { new: true }).exec();
+    const updatedProduct = await this.baseProductModel.findByIdAndUpdate(productId, updateProductDto, { new: true }).exec();
 
     try {
       if (!updatedProduct) {
@@ -49,7 +49,7 @@ export class BaseProductService {
   }
 
   async delete(productId: string): Promise<any> {
-    const result = await this.productModel.deleteOne({ _id: productId }).exec();
+    const result = await this.baseProductModel.deleteOne({ _id: productId }).exec();
     if (result.deletedCount === 0) {
       throw new NotFoundException(`Producto con ID ${productId} no encontrado`);
     }
