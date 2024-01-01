@@ -11,10 +11,6 @@ export class ProductService {
   async findAll(): Promise<Product[]> {
 
     try {
-      const collectionName = this.productModel.collection.name;
-      const dbName = this.productModel.db.name;
-      console.log('Accessing collection:', collectionName, 'in database:', dbName);
-
       const result = await this.productModel.find().exec();
       return result
     } catch (error) {

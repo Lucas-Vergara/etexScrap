@@ -17,7 +17,8 @@ export default async function homecenterScrape(input: {
   const date: string = `${day}-${month}-${year}`
   const page = await browser.newPage();
   page.setDefaultNavigationTimeout(0);
-  const maxTries = 10;
+  let maxTries = 10;
+  if (input.products.length === 1) maxTries = 1; //for creating or editing products
   let currentTry = 0;
 
   for (const product of input.products) {
@@ -27,6 +28,7 @@ export default async function homecenterScrape(input: {
     // await page.click('.SearchBar-module_searchBtnIcon__2L2s0');
     currentTry = 0
     await page.goto(product.sku);
+
     while (currentTry < maxTries) {
       try {
         await page.waitForSelector('li[data-internet-price]');

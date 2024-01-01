@@ -1,5 +1,9 @@
 import puppeteer from 'puppeteer';
 import { BaseProduct } from 'src/modules/product/models/baseProduct.interface';
+import ferrobalScrape from '../scripts/ferrobal';
+import homecenterScrape from '../scripts/homecenter';
+import tosoScrape from '../scripts/toso';
+import yolitoScrape from '../scripts/yolito';
 
 interface DistributorSelectors {
   name: string;
@@ -22,11 +26,14 @@ const distributors: DistributorSelectors[] =
   ]
 
 export default async function singleScrape(product: BaseProduct): Promise<any> {
+  if (distributorScrapers[product.distributor]) {
+    return await distributorScrapers[product.distributor]({ products: [product], date: new Date, tracker: null, scrapingTrackerService: null, });
+  }
+
   const distributorInfo = distributors.find(d => d.name === product.distributor);
   if (!distributorInfo) {
     throw new Error(`No se encontraron selectores para el distribuidor: ${product.distributor}`);
   }
-
 
   const { priceSelector, titleSelector } = distributorInfo;
   const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox'] });
@@ -73,3 +80,10 @@ export default async function singleScrape(product: BaseProduct): Promise<any> {
   }
   await browser.close();
 }
+
+const distributorScrapers = {
+  Ferrobal: ferrobalScrape,
+  Sodimac: homecenterScrape,
+  Toso: tosoScrape,
+  Yolito: yolitoScrape,
+};

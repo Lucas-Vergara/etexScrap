@@ -9,11 +9,6 @@ export class ScrapDataService {
 
   async findAll(): Promise<ScrapData[]> {
     try {
-      const collectionName = this.scrapDataModel.collection.name;
-      const dbName = this.scrapDataModel.db.name;
-
-      console.log('Accessing collection:', collectionName, 'in database:', dbName);
-
       const result = await this.scrapDataModel.find().exec();
       console.log('Result from ScrapDataService findAll:', result);
       return result;

@@ -17,7 +17,8 @@ export default async function tosoScrape(input: {
   const date: string = `${day}-${month}-${year}`
   const page = await browser.newPage();
   page.setDefaultNavigationTimeout(0);
-  const maxTries = 10;
+  let maxTries = 10;
+  if (input.products.length === 1) maxTries = 1; //for creating or editing products
   let currentTry = 0;
 
   for (const product of input.products) {

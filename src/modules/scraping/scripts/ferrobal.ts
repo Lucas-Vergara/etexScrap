@@ -19,7 +19,9 @@ export default async function ferrobalScrape(input: {
   const page = await browser.newPage();
   page.setDefaultNavigationTimeout(0);
 
-  const maxTries = 10;
+  let maxTries = 10;
+  if (input.products.length === 1) maxTries = 1; //for creating or editing products
+
   let currentTry = 0;
 
 

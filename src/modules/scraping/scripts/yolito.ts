@@ -21,7 +21,8 @@ export default async function yolitoScrape(input: {
   const base_url = "https://www.yolito.cl/Home/SetDeliveryMethod?isDelivery=True&idComuna="
   await page.goto(base_url + "Las Condes")
   await page.goto("https://www.yolito.cl/")
-  const maxTries = 10;
+  let maxTries = 10;
+  if (input.products.length === 1) maxTries = 1; //for creating or editing products
   let currentTry = 0;
 
   for (const product of input.products) {
