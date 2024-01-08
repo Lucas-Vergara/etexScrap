@@ -39,8 +39,16 @@ export default async function dynamicScrape(input: {
       try {
         await page.waitForSelector(input.priceSelector, { timeout: 10000 });
 
-        let price = await page.$eval(input.priceSelector, (element) => {
-          return element.textContent.trim()
+        let price = await page.$eval(input.priceSelector, (priceElement) => {
+          // Primero, verificar si hay un elemento <del> dentro del elemento seleccionado
+          const strikethroughElement = priceElement.querySelector('del');
+          if (strikethroughElement) {
+            // Si hay un elemento <del>, removerlo del DOM
+            strikethroughElement.remove();
+          }
+
+          // Luego, obtener el texto del precio, que ahora debería ser el correcto
+          return priceElement.textContent.trim();
         });
 
         const webTitle = await page.$eval(input.titleSelector, (element) => {

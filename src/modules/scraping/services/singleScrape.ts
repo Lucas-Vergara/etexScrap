@@ -49,7 +49,17 @@ export default async function singleScrape(product: BaseProduct): Promise<any> {
       try {
         await page.waitForSelector(priceSelector, { timeout: 2000 });
 
-        let price = await page.$eval(priceSelector, (element) => element.textContent.trim());
+        let price = await page.$eval(priceSelector, (priceElement) => {
+          // Primero, verificar si hay un elemento <del> dentro del elemento seleccionado
+          const strikethroughElement = priceElement.querySelector('del');
+          if (strikethroughElement) {
+            // Si hay un elemento <del>, removerlo del DOM
+            strikethroughElement.remove();
+          }
+
+          // Luego, obtener el texto del precio, que ahora debería ser el correcto
+          return priceElement.textContent.trim();
+        });
         const webTitle = await page.$eval(titleSelector, (element) => element.textContent.trim());
         result = {
           category: product.category,
