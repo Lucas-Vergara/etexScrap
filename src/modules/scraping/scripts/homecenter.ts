@@ -47,6 +47,7 @@ export default async function homecenterScrape(input: {
           year,
           date,
           category: product.category,
+          format: product.format,
           region: product.region,
           name: product.name,
           brand: product.brand,
