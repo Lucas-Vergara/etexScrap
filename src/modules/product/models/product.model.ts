@@ -29,7 +29,7 @@ export class Product extends Document {
   @Prop({ required: true })
   distributor: String;
 
-  @Prop({ required: true })
+  @Prop({ required: true, unique: true })
   sku: String;
 
   @Prop({ required: true })
