@@ -25,8 +25,4 @@ import { ScreenshotModule } from './modules/screenshot/screenshot.module';
   providers: [AppService],
 
 })
-export class AppModule {
-  constructor() {
-    console.log('MongoDB connected successfully');
-  }
-}
+export class AppModule {}
