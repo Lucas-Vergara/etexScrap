@@ -1,4 +1,4 @@
-import { Controller, Get, Req, Res, UseGuards } from '@nestjs/common';
+import { Controller, Get, Query, Req, Res, UseGuards } from '@nestjs/common';
 import { ScrapingService } from '../services/scraping.service';
 import * as ExcelJS from 'exceljs';
 import { Product } from 'src/modules/product/models/product.model';
@@ -34,9 +34,16 @@ export class ScrapingController {
 
   @UseGuards(JwtAuthGuard)
   @Get('api/download-excel')
-  async downloadExcel(@Res() res: Response) {
+  async downloadExcel(
+    @Query('start') startDate: string, // Recibe la fecha de inicio como "dd-mm-aaaa"
+    @Query('end') endDate: string, // Recibe la fecha de fin como "dd-mm-aaaa"
+    @Res() res: Response,
+  ) {
     try {
-      const products: Product[] = await this.productService.findAll();
+      // Si las fechas vienen en formato "dd-mm-aaaa", el servicio ya está preparado para manejarlo
+      const products = await this.productService.findAll(startDate, endDate);
+
+      // Obtener productos filtrados por el rango de fechas
 
       const workbook = new ExcelJS.Workbook();
       const worksheet = workbook.addWorksheet('productos');
