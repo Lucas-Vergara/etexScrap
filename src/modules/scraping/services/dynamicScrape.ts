@@ -37,7 +37,7 @@ export default async function dynamicScrape(input: {
     await page.goto(product.sku);
     while (currentTry < maxTries) {
       try {
-        await page.waitForSelector(input.priceSelector, { timeout: 10000 });
+        await page.waitForSelector(input.priceSelector, { timeout: 4000 });
 
         let price = await page.$eval(input.priceSelector, (priceElement) => {
           // Primero, verificar si hay un elemento <del> dentro del elemento seleccionado
