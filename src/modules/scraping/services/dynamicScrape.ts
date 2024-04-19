@@ -6,6 +6,13 @@ import ferrobalScrape from "../scripts/ferrobal";
 import homecenterScrape from "../scripts/homecenter";
 import tosoScrape from "../scripts/toso";
 import yolitoScrape from "../scripts/yolito";
+const Xvfb = require('xvfb') as any;
+
+var xvfb = new Xvfb({
+  silent: true,
+  xvfb_args: ["-screen", "0", "1280x720x24", "-ac"],
+});
+
 
 
 export default async function dynamicScrape(input: {
@@ -22,8 +29,11 @@ export default async function dynamicScrape(input: {
     return await distributorScrapers[input.products[0].distributor]({ products: input.products, date: input.date, tracker: input.tracker, scrapingTrackerService: input.scrapingTrackerService, });
   }
 
-  const headless = input.products[0].distributor === 'Weitzler' ? false : true;
-  const browser = await puppeteer.launch({ headless: headless, args: ['--no-sandbox'] });
+  const headless = input.products[0].distributor !== 'Weitzler';
+  const browser = await puppeteer.launch({ headless: headless, args: ['--no-sandbox', '--disable-setuid-sandbox'] });
+  if (input.products[0].distributor !== 'Weitzler') {
+    xvfb.startSync();  // Start Xvfb
+  }
   const results: any[] = [];
   const day: string = input.date.getDate().toString()
   const month: string = (input.date.getMonth() + 1).toString()
@@ -91,6 +101,9 @@ export default async function dynamicScrape(input: {
     }
   }
   await browser.close();
+  if (input.products[0].distributor !== 'Weitzler') {
+    xvfb.stopSync();  // Stop Xvfb
+  }
   return results;
 }
 
