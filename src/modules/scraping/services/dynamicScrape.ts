@@ -22,7 +22,8 @@ export default async function dynamicScrape(input: {
     return await distributorScrapers[input.products[0].distributor]({ products: input.products, date: input.date, tracker: input.tracker, scrapingTrackerService: input.scrapingTrackerService, });
   }
 
-  const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox'] });
+  const headless = input.products[0].distributor === 'Weitzler' ? false : true;
+  const browser = await puppeteer.launch({ headless: headless, args: ['--no-sandbox'] });
   const results: any[] = [];
   const day: string = input.date.getDate().toString()
   const month: string = (input.date.getMonth() + 1).toString()
