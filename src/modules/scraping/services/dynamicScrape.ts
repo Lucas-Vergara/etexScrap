@@ -6,14 +6,6 @@ import ferrobalScrape from "../scripts/ferrobal";
 import homecenterScrape from "../scripts/homecenter";
 import tosoScrape from "../scripts/toso";
 import yolitoScrape from "../scripts/yolito";
-const Xvfb = require('xvfb') as any;
-
-var xvfb = new Xvfb({
-  silent: true,
-  xvfb_args: ["-screen", "0", "1280x720x24", "-ac"],
-});
-
-
 
 export default async function dynamicScrape(input: {
   products: BaseProduct[],
@@ -29,11 +21,7 @@ export default async function dynamicScrape(input: {
     return await distributorScrapers[input.products[0].distributor]({ products: input.products, date: input.date, tracker: input.tracker, scrapingTrackerService: input.scrapingTrackerService, });
   }
 
-  const headless = input.products[0].distributor !== 'Weitzler';
-  const browser = await puppeteer.launch({ headless: headless, args: ['--no-sandbox', '--disable-setuid-sandbox'] });
-  if (input.products[0].distributor !== 'Weitzler') {
-    xvfb.startSync();  // Start Xvfb
-  }
+  const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox'] });
   const results: any[] = [];
   const day: string = input.date.getDate().toString()
   const month: string = (input.date.getMonth() + 1).toString()
@@ -45,6 +33,7 @@ export default async function dynamicScrape(input: {
 
   for (const product of input.products) {
     let currentTry = 0;
+    await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.102 Safari/537.36');
     await page.goto(product.sku);
     while (currentTry < maxTries) {
       try {
@@ -101,9 +90,6 @@ export default async function dynamicScrape(input: {
     }
   }
   await browser.close();
-  if (input.products[0].distributor !== 'Weitzler') {
-    xvfb.stopSync();  // Stop Xvfb
-  }
   return results;
 }
 
