@@ -6,6 +6,7 @@ import ferrobalScrape from "../scripts/ferrobal";
 import homecenterScrape from "../scripts/homecenter";
 import tosoScrape from "../scripts/toso";
 import yolitoScrape from "../scripts/yolito";
+import easyScrape from "../scripts/easy";
 
 export default async function dynamicScrape(input: {
   products: BaseProduct[],
@@ -98,5 +99,6 @@ const distributorScrapers = {
   Sodimac: homecenterScrape,
   Toso: tosoScrape,
   Yolito: yolitoScrape,
+  Easy: easyScrape,
 };
 
