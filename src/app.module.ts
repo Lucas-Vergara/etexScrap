@@ -13,7 +13,7 @@ import { ScreenshotModule } from './modules/screenshot/screenshot.module';
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    MongooseModule.forRoot('mongodb://test:test@ac-qcmicej-shard-00-00.qyrybhz.mongodb.net:27017,ac-qcmicej-shard-00-01.qyrybhz.mongodb.net:27017,ac-qcmicej-shard-00-02.qyrybhz.mongodb.net:27017/test?replicaSet=atlas-cf0og1-shard-0&ssl=true&authSource=admin'),
+    MongooseModule.forRoot(process.env.MONGO_CONNECTION),
     ScrapDataModule,
     ProductModule,
     ScrapingModule,
