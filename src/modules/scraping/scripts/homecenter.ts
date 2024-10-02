@@ -17,7 +17,7 @@ export default async function homecenterScrape(input: {
   const date: string = `${day}-${month}-${year}`
   const page = await browser.newPage();
   page.setDefaultNavigationTimeout(0);
-  let maxTries = 10;
+  let maxTries = 4;
   if (input.products.length === 1) maxTries = 1; //for creating or editing products
   let currentTry = 0;
 
@@ -31,11 +31,21 @@ export default async function homecenterScrape(input: {
 
     while (currentTry < maxTries) {
       try {
-        await page.waitForSelector('li[data-internet-price]');
 
-        const price = await page.$eval('li[data-internet-price]', (element) => {
-          return element.getAttribute('data-internet-price').replace('.', '');
-        });
+
+        let price = '';
+        if (currentTry < 2) {
+          await page.waitForSelector('li[data-internet-price]', { timeout: 4000 });
+          price = await page.$eval('li[data-internet-price]', (element) => {
+            return element.getAttribute('data-internet-price').replace('.', '');
+          });
+        } else {
+          await page.waitForSelector('li[data-event-price]', { timeout: 4000 });
+          price = await page.$eval('li[data-event-price]', (element) => {
+            return element.getAttribute('data-event-price').replace('.', '');
+          });
+        }
+
 
         const webTitle = await page.$eval('h1[data-name]', (element) => {
           return element.getAttribute('data-name');

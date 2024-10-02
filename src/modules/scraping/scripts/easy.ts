@@ -18,7 +18,7 @@ export default async function easyScrape(input: {
   const page = await browser.newPage();
   page.setDefaultNavigationTimeout(0);
 
-  let maxTries = 10;
+  let maxTries = 3;
   if (input.products.length === 1) maxTries = 1;
 
   let currentTry = 0;
