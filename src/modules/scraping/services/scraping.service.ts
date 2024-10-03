@@ -28,6 +28,7 @@ export class ScrapingService {
       const date = new Date()
       let productsAmount = 0;
 
+
       const distributors = [
         { name: 'Construmart', products: filterProductsByDistributor(products, 'Construmart'), priceSelector: '.vtex-product-price-1-x-sellingPriceValue', titleSelector: '.vtex-store-components-3-x-productBrand' },
         { name: 'Construplaza', products: filterProductsByDistributor(products, 'Construplaza'), priceSelector: 'span.price', titleSelector: 'div.name' },
