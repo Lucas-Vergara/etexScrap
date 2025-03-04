@@ -1,40 +1,49 @@
-import { BaseProduct } from "src/modules/product/models/baseProduct.interface";
-import { ScrapingTracker } from "../models/scrapingTracker.model";
-import { ScrapingTrackerService } from "./scrapingTracker.service";
-import puppeteer from "puppeteer";
-import ferrobalScrape from "../scripts/ferrobal";
-import homecenterScrape from "../scripts/homecenter";
-import tosoScrape from "../scripts/toso";
-import yolitoScrape from "../scripts/yolito";
-import easyScrape from "../scripts/easy";
+import { BaseProduct } from 'src/modules/product/models/baseProduct.interface';
+import { ScrapingTracker } from '../models/scrapingTracker.model';
+import { ScrapingTrackerService } from './scrapingTracker.service';
+import puppeteer from 'puppeteer';
+import ferrobalScrape from '../scripts/ferrobal';
+import homecenterScrape from '../scripts/homecenter';
+import tosoScrape from '../scripts/toso';
+import yolitoScrape from '../scripts/yolito';
+import easyScrape from '../scripts/easy';
 
 export default async function dynamicScrape(input: {
-  products: BaseProduct[],
-  date: Date,
-  tracker: ScrapingTracker,
-  scrapingTrackerService: ScrapingTrackerService,
-  priceSelector: string,
-  titleSelector: string,
+  products: BaseProduct[];
+  date: Date;
+  tracker: ScrapingTracker;
+  scrapingTrackerService: ScrapingTrackerService;
+  priceSelector: string;
+  titleSelector: string;
 }): Promise<any> {
-
   // retornar casos especiales
   if (distributorScrapers[input.products[0].distributor]) {
-    return await distributorScrapers[input.products[0].distributor]({ products: input.products, date: input.date, tracker: input.tracker, scrapingTrackerService: input.scrapingTrackerService, });
+    return await distributorScrapers[input.products[0].distributor]({
+      products: input.products,
+      date: input.date,
+      tracker: input.tracker,
+      scrapingTrackerService: input.scrapingTrackerService,
+    });
   }
 
-  const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox'] });
+  const browser = await puppeteer.launch({
+    headless: true,
+    args: ['--no-sandbox', '--disable-setuid-sandbox'],
+  });
   const results: any[] = [];
-  const day: string = input.date.getDate().toString()
-  const month: string = (input.date.getMonth() + 1).toString()
-  const year: string = (input.date.getFullYear()).toString()
-  const date: string = `${day}-${month}-${year}`
+  const day: string = input.date.getDate().toString();
+  const month: string = (input.date.getMonth() + 1).toString();
+  const year: string = input.date.getFullYear().toString();
+  const date: string = `${day}-${month}-${year}`;
   const page = await browser.newPage();
   page.setDefaultNavigationTimeout(0);
-  const maxTries = 10;
+  const maxTries = 4;
 
   for (const product of input.products) {
     let currentTry = 0;
-    await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.102 Safari/537.36');
+    await page.setUserAgent(
+      'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.102 Safari/537.36',
+    );
     await page.goto(product.sku);
     while (currentTry < maxTries) {
       try {
@@ -80,7 +89,10 @@ export default async function dynamicScrape(input: {
         if (currentTry + 1 === maxTries) {
           await input.scrapingTrackerService.pushToMissingProducts(
             input.tracker._id,
-            { product: `${product.name} | ${product.brand} | ${product.distributor}`, product_url: product.sku }
+            {
+              product: `${product.name} | ${product.brand} | ${product.distributor}`,
+              product_url: product.sku,
+            },
           );
         }
         currentTry++;
@@ -101,4 +113,3 @@ const distributorScrapers = {
   Yolito: yolitoScrape,
   Easy: easyScrape,
 };
-
