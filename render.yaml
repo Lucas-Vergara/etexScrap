@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: m-scrap
+    env: node
+    plan: free
+    region: oregon
+    buildCommand: npm install && npm run build
+    startCommand: npm run start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGO_CONNECTION
+        sync: false
+      - key: SECRET
+        sync: false
