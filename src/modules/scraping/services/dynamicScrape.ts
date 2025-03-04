@@ -37,7 +37,7 @@ export default async function dynamicScrape(input: {
   const date: string = `${day}-${month}-${year}`;
   const page = await browser.newPage();
   page.setDefaultNavigationTimeout(0);
-  const maxTries = 4;
+  const maxTries = 3;
 
   for (const product of input.products) {
     let currentTry = 0;
