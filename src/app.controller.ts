@@ -1,4 +1,14 @@
-import { Controller, Get, Request, Post, UseGuards, Body, Param, Delete, Put } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Request,
+  Post,
+  UseGuards,
+  Body,
+  Param,
+  Delete,
+  Put,
+} from '@nestjs/common';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
 import { LocalAuthGuard } from './auth/local-auth.guard';
 import { AuthService } from './auth/auth.service';
@@ -42,7 +52,7 @@ export class AppController {
   ) {
     return this.userService.changePassword({
       email: userEmail,
-      newPassword: newPassword
+      newPassword: newPassword,
     });
   }
 
@@ -59,6 +69,11 @@ export class AppController {
   @UseGuards(JwtAuthGuard)
   @Get('/auth/user')
   getUser(@Request() req) {
-    return req.user
+    return req.user;
+  }
+
+  @Get('ping')
+  ping() {
+    return 'pong';
   }
 }
